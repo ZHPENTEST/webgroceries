@@ -4,7 +4,7 @@
 <div><b>Shop</b><br><a href="/shop">All products</a><br><a href="/category/fresh-produce">Fresh produce</a><br><a href="/category/dairy">Dairy</a></div>
 <div><b>Account</b><br><a href="/account">Profile</a><br><a href="/orders">Orders</a><br><a href="/cart">Cart</a></div>
 <div><b>Stay fresh</b><form class="search" onsubmit="event.preventDefault();toast('You are subscribed')"><input placeholder="Email address"><button>Join</button></form></div>
-</div><div class="wrap tiny">© 2026 WebGroceries · Demo storefront · Prices in RM</div></footer>
+</div><div class="wrap tiny">© 2026 WebGroceries · Developed by ZHPENTEST · Prices in RM</div></footer>
 <div id="toasts"></div>
 <?php $cur = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH); $bu = $u ?? \App\Core\Auth::user(); ?>
 <nav class="bnav" aria-label="Mobile">
