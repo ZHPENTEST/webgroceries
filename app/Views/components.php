@@ -1,6 +1,6 @@
 <?php function pcard(array $p): void { $eff = \App\Models\Product::effectivePrice($p); $off = $p['discount_price'] ? round(100*(1-$p['discount_price']/$p['price'])) : 0; ?>
 <article class="pcard" style="--i:0">
-<a href="/product/<?= e($p['slug']) ?>"><img loading="lazy" src="<?= e($p['image'] ?? '') ?>" alt="<?= e($p['name']) ?>"></a>
+<a href="/product/<?= e($p['slug']) ?>"><?= pimg($p['image'] ?? '', $p['name'] ?? '', 'loading="lazy"') ?></a>
 <?php if ($off): ?><span class="badge">-<?= $off ?>%</span><?php endif; ?>
 <button class="wish" data-wish="<?= (int)$p['id'] ?>" aria-label="wishlist">♡</button>
 <div class="pbody"><span class="cat"><?= e($p['cat_name'] ?? $p['brand'] ?? '') ?></span>

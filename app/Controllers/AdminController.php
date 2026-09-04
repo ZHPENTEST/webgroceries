@@ -154,6 +154,8 @@ final class AdminController {
     if ($mime === 'image/jpeg') { $im = imagecreatefromjpeg($f['tmp_name']); imagejpeg($im, $dst, 85); }
     elseif ($mime === 'image/png') { $im = imagecreatefrompng($f['tmp_name']); imagepng($im, $dst, 6); }
     else { $im = imagecreatefromwebp($f['tmp_name']); imagewebp($im, $dst, 85); }
+    $twin = preg_replace('/\.(jpg|png)$/', '.webp', $dst);
+    if ($twin !== $dst) imagewebp($im, $twin, 80);
     return '/assets/images/products/' . $name;
   }
 }

@@ -3,7 +3,7 @@
 <?php else: ?><div class="cartwrap"><div id="cartList">
 <?php foreach ($items as $i): $eff = \App\Models\Product::effectivePrice($i); ?>
 <div class="citem" data-id="<?= (int)$i['product_id'] ?>">
-<img src="<?= e($i['image']) ?>" alt="<?= e($i['name']) ?>">
+<?= pimg($i['image'], $i['name'], 'loading="lazy"') ?>
 <div><b><?= e($i['name']) ?></b><span class="muted"><?= money($eff) ?> / <?= e($i['unit']) ?></span>
 <div class="qty sm"><button data-dec>−</button><input value="<?= (int)$i['quantity'] ?>" data-q inputmode="numeric" pattern="[0-9]*"><button data-inc>+</button></div></div>
 <div class="cline" data-line><?= money($eff * (int)$i['quantity']) ?></div>

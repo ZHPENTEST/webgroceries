@@ -30,6 +30,18 @@ function view_admin(string $name, array $data = []): void {
   require $base . 'layout/admin_footer.php';
 }
 function money(float $n): string { return 'RM ' . number_format($n, 2); }
+function pimg(string $src, string $alt, string $attrs = ''): string {
+  // Serve WebP twin when it exists (generated for all seed images + admin uploads), JPG fallback otherwise
+  $a = e($alt);
+  if (str_ends_with($src, '.jpg')) {
+    $w = substr($src, 0, -4) . '.webp';
+    $full = dirname(__DIR__, 2) . '/public' . strtok($w, '?');
+    if (is_file($full)) {
+      return '<picture><source srcset="' . e($w) . '" type="image/webp"><img src="' . e($src) . '" alt="' . $a . '" decoding="async" ' . $attrs . '></picture>';
+    }
+  }
+  return '<img src="' . e($src) . '" alt="' . $a . '" decoding="async" ' . $attrs . '>';
+}
 function asset(string $p): string {
   // Cache-busting: URL changes whenever the file changes, so browsers never keep stale CSS/JS
   $f = dirname(__DIR__, 2) . '/public' . strtok($p, '?');

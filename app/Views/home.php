@@ -1,10 +1,10 @@
 <?php require dirname(__FILE__) . '/components.php'; ?>
 <section class="hero">
-<div class="hero-t"><h1>Fresh groceries <img src="/assets/images/products/hero-salad.jpg" alt="fresh vegetables"> delivered in <em>hours</em>, <img src="/assets/images/products/fresh-strawberries-250g.jpg" alt="fresh fruit"> not days.</h1>
+<div class="hero-t"><h1>Fresh groceries <?= pimg('/assets/images/products/hero-salad.jpg', 'fresh vegetables') ?> delivered in <em>hours</em>, <?= pimg('/assets/images/products/fresh-strawberries-250g.jpg', 'fresh fruit') ?> not days.</h1>
 <p>Produce, dairy, meat and pantry staples — picked fresh, priced fairly, tracked to your door.</p>
 <a class="btn big" href="/shop">Shop fresh now</a>
 <div class="trust"><span>★ 4.8 from 6,214 orders</span><span>Free shipping over RM 80</span><span>COD + online payment</span></div></div>
-<div class="hero-v"><img src="/assets/images/products/hero-market.jpg" alt="Grocery basket"><div class="float-card"><b>Today's deal</b><span>Strawberries 250g — RM 9.90</span><a href="/shop">Grab it →</a></div></div>
+<div class="hero-v"><?= pimg('/assets/images/products/hero-market.jpg', 'Grocery basket', 'fetchpriority="high"') ?><div class="float-card"><b>Today's deal</b><span>Strawberries 250g — RM 9.90</span><a href="/shop">Grab it →</a></div></div>
 </section>
 <h2 class="st">Shop by category</h2>
 <div class="catgrid"><?php foreach ($cats as $c): ?><a class="ccard" href="/category/<?= e($c['slug']) ?>"><b><?= e($c['name']) ?></b><span><?= e($c['description'] ?? '') ?></span></a><?php endforeach; ?></div>

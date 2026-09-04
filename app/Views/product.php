@@ -1,6 +1,6 @@
 <?php $eff = \App\Models\Product::effectivePrice($p); ?>
 <div class="pdetail">
-<div><img class="pimg" src="<?= e($p['image'] ?? '') ?>" alt="<?= e($p['name']) ?>"></div>
+<div><?= pimg($p['image'] ?? '', $p['name'] ?? '', 'class="pimg" fetchpriority="high"') ?></div>
 <div><span class="cat"><?= e($p['cat_name']) ?> · <?= e($p['brand'] ?? '') ?></span>
 <h1><?= e($p['name']) ?></h1>
 <div class="price big"><?php if ($p['discount_price']): ?><s><?= money((float)$p['price']) ?></s><?php endif; ?><b><?= money($eff) ?></b></div>
