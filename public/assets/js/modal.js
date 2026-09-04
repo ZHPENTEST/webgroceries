@@ -1,0 +1,1 @@
+function openModal(html){let m=document.getElementById('modal');if(!m){m=document.createElement('div');m.id='modal';document.body.appendChild(m);}m.innerHTML='<div class="mback" onclick="closeModal()"></div><div class="mbox">'+html+'</div>';}function closeModal(){document.getElementById('modal')?.remove();}

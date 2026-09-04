@@ -1,0 +1,3 @@
+<h1>Orders</h1>
+<form class="row" method="get"><select name="status"><option value="">All</option><?php foreach (['pending','confirmed','processing','packed','out_for_delivery','delivered','cancelled'] as $s): ?><option <?= $st === $s ? 'selected' : '' ?>><?= $s ?></option><?php endforeach; ?></select><button class="btn">Filter</button></form>
+<div class="tbl"><table><tr><th>Number</th><th>Total</th><th>Status</th><th>Date</th></tr><?php foreach ($items as $o): ?><tr><td><a href="/admin/orders/<?= (int)$o['id'] ?>"><?= e($o['order_number']) ?></a></td><td><?= money((float)$o['total']) ?></td><td><?= e($o['status']) ?></td><td><?= e($o['created_at']) ?></td></tr><?php endforeach; ?></table></div>

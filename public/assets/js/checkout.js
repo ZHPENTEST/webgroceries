@@ -1,0 +1,2 @@
+document.querySelectorAll('[data-fill]').forEach(r=>r.addEventListener('change',()=>{if(!r.checked||r.value==='new')return;const a=JSON.parse(r.dataset.fill);const f=document.getElementById('coForm');f.line1.value=a.line1||'';f.city.value=a.city||'';f.postcode.value=a.postcode||'';f.phone.value=a.phone||'';toast('Address filled');}));
+document.getElementById('coForm')?.addEventListener('submit',e=>{const b=document.getElementById('placeBtn');b.disabled=true;b.textContent='Placing order…';});

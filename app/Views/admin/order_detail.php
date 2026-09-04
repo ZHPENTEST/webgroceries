@@ -1,0 +1,4 @@
+<h1><?= e($o['order_number']) ?></h1>
+<div class="agrid"><div class="card"><h3>Items</h3><?php foreach ($items as $i): ?><div class="srow"><span><?= e($i['product_name']) ?> × <?= (int)$i['quantity'] ?></span><b><?= money((float)$i['line_total']) ?></b></div><?php endforeach; ?><div class="srow tot"><span>Total</span><b><?= money((float)$o['total']) ?></b></div>
+<p><?= e($o['recipient']) ?> · <?= e($o['phone']) ?><br><?= e($o['address_line']) ?>, <?= e($o['city']) ?> <?= e($o['postcode']) ?></p></div>
+<div class="card"><h3>Status: <?= e($o['status']) ?></h3><form method="post" action="/admin/orders/<?= (int)$o['id'] ?>/status" class="row"><?= csrf_field() ?><select name="status"><?php foreach (['pending','confirmed','processing','packed','out_for_delivery','delivered','cancelled'] as $s): ?><option <?= $o['status'] === $s ? 'selected' : '' ?>><?= $s ?></option><?php endforeach; ?></select><button class="btn">Update</button></form></div></div>

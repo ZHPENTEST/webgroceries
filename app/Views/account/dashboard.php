@@ -1,0 +1,12 @@
+<h1>My account</h1>
+<div class="agrid">
+<div class="card"><h3>Profile photo</h3>
+<div class="avarow"><?php if (!empty($u['avatar'])): ?><img class="avatar lg" src="<?= e($u['avatar']) ?>" alt="Profile photo"><?php endif; ?>
+<form method="post" action="/account/avatar" enctype="multipart/form-data" class="row"><?= csrf_field() ?><input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" required><button class="btn">Upload</button></form></div>
+<h3>Profile</h3><form method="post" action="/account/profile"><?= csrf_field() ?><label>Name<input name="name" value="<?= e($u['name']) ?>"></label><label>Phone<input name="phone" value="<?= e($u['phone'] ?? '') ?>"></label><button class="btn">Update</button></form>
+<h3>Security</h3><form method="post" action="/account/password"><?= csrf_field() ?><label>Current<input name="current" type="password"></label><label>New (8+)<input name="new" type="password" minlength="8"></label><button class="btn">Change password</button></form></div>
+<div class="card"><h3>Addresses</h3><?php foreach ($addrs as $a): ?><div class="srow"><span><?= e($a['label']) ?> — <?= e($a['line1']) ?>, <?= e($a['city']) ?></span><form method="post" action="/account/address/<?= (int)$a['id'] ?>/delete"><?= csrf_field() ?><button class="link">Delete</button></form></div><?php endforeach; ?>
+<form method="post" action="/account/address"><?= csrf_field() ?><div class="row"><label>Label<input name="label" value="Home"></label><label>Recipient<input name="recipient" required></label></div><div class="row"><label>Phone<input name="phone" required></label><label>Street<input name="line1" required></label></div><div class="row"><label>City<input name="city" required></label><label>Postcode<input name="postcode" required></label></div><button class="btn">Save address</button></form></div>
+</div>
+<div class="agrid"><div class="card"><h3>Recent orders</h3><?php if (!$orders): ?><p class="muted">No orders yet.</p><?php endif; ?><?php foreach ($orders as $o): ?><div class="srow"><a href="/orders/<?= (int)$o['id'] ?>"><?= e($o['order_number']) ?></a><b><?= money((float)$o['total']) ?></b></div><?php endforeach; ?><a href="/orders">View all →</a></div>
+<div class="card"><h3>Wishlist</h3><?php if (!$wl): ?><p class="muted">Nothing saved yet.</p><?php endif; ?><?php foreach ($wl as $w): ?><div class="srow"><a href="/product/<?= e($w['slug']) ?>"><?= e($w['name']) ?></a><b><?= money((float)($w['discount_price'] ?? $w['price'])) ?></b></div><?php endforeach; ?></div></div>

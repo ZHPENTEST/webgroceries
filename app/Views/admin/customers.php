@@ -1,0 +1,1 @@
+<h1>Customers</h1><div class="tbl"><table><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Joined</th></tr><?php foreach ($items as $c): ?><tr><td><?= e($c['name']) ?></td><td><?= e($c['email']) ?></td><td><?= e($c['phone'] ?? '—') ?></td><td><?= e($c['status']) ?></td><td><?= e($c['created_at']) ?></td></tr><?php endforeach; ?></table></div>

@@ -1,0 +1,1 @@
+let t;document.querySelector('.search input')?.addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{if(e.target.value.length>=2)fetch('/shop?q='+encodeURIComponent(e.target.value)).then(()=>{});},400);});
