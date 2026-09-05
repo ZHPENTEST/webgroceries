@@ -1,4 +1,10 @@
 document.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{const p=JSON.parse(b.dataset.edit);for(const k of['id','name','brand'])document.getElementById('f_'+k).value=p[k]??'';document.querySelector('[name=price]').value=p.price;document.querySelector('[name=stock_quantity]').value=p.stock_quantity;document.querySelector('[name=description]').value=p.description||'';document.getElementById('f_img').value=p.image||'';window.scrollTo({top:0,behavior:'smooth'});}));
+// Responsive tables: label each cell from its column header (mobile cards)
+document.querySelectorAll('.tbl table').forEach(t=>{
+  const rows=[...t.querySelectorAll('tr')]; if(!rows.length) return;
+  const heads=[...rows[0].children].map(h=>h.textContent.trim());
+  rows.slice(1).forEach(tr=>{[...tr.children].forEach((td,i)=>{if(heads[i])td.setAttribute('data-label',heads[i]);});});
+});
 // Inline stock stepper
 const acsrf=document.querySelector('meta[name=csrf]')?.content||'';
 document.querySelectorAll('[data-sp]').forEach(b=>b.addEventListener('click',async()=>{
