@@ -4,6 +4,10 @@
 <div class="coMain">
 <fieldset><legend>Contact</legend><div class="row"><label>Full name<input name="name" required autocomplete="name" value="<?= e(\App\Core\Auth::user()['name'] ?? '') ?>"></label><label>Phone<input name="phone" required inputmode="tel" autocomplete="tel"></label></div></fieldset>
 <fieldset><legend>Delivery address</legend>
+<p class="muted">Gerakkan pin ke rumah anda — alamat auto-isi. Laju dan tepat untuk rider.</p>
+<div id="mapPicker" data-key="<?= e($mapKey ?? '') ?>"></div>
+<div class="row"><button type="button" class="btn ghost" id="locateBtn">Guna lokasi semasa</button><small id="pinRead" class="muted"></small></div>
+<input type="hidden" name="lat" id="f_lat"><input type="hidden" name="lng" id="f_lng">
 <?php if ($addrs): ?><div class="addrPick"><label class="radio"><input type="radio" name="addr_pick" value="new" checked> New address</label><?php foreach ($addrs as $i => $a): ?><label class="radio"><input type="radio" name="addr_pick" value="<?= (int)$i ?>" data-fill='<?= json_encode($a, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'> <?= e($a['label']) ?> — <?= e($a['line1']) ?>, <?= e($a['city']) ?></label><?php endforeach; ?></div><?php endif; ?>
 <label>Street<input name="line1" required autocomplete="street-address"></label><div class="row"><label>City<input name="city" required autocomplete="address-level2"></label><label>Postcode<input name="postcode" required inputmode="numeric" autocomplete="postal-code"></label></div></fieldset>
 <fieldset><legend>Delivery method</legend>
@@ -29,3 +33,6 @@
 <p class="muted">Free standard shipping over <?= money($free_over) ?>.</p>
 <button class="btn big" id="placeBtn">Place order</button></aside>
 </form>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="<?= asset('/assets/js/maps.js') ?>"></script>

@@ -15,4 +15,5 @@
 <?php if ($qr): ?><img class="qrbox-img" src="<?= e($qr) ?>" alt="Payment QR"><?php endif; ?>
 <form method="post" action="/orders/<?= (int)$o['id'] ?>/claim-paid" onsubmit="return confirm('Sahkan anda sudah buat bayaran?')"><?= csrf_field() ?><button class="btn big">Saya Dah Bayar</button></form>
 <?php elseif ($o['payment_method'] === 'transfer' && ($pay['status'] ?? '') === 'claimed'): ?><div class="alert ok">Bayaran dihantar — menunggu pengesahan admin.</div><?php endif; ?>
-<p>Placed: <?= e($o['created_at']) ?></p></div></div>
+<p>Placed: <?= e($o['created_at']) ?></p>
+<?php if (!empty($o['latitude']) && !empty($o['longitude'])): ?><p><a class="btn ghost" target="_blank" rel="noopener" href="https://www.google.com/maps?q=<?= e($o['latitude']) ?>,<?= e($o['longitude']) ?>">Lihat pin di Google Maps</a></p><?php endif; ?></div></div>

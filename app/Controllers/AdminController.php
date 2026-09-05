@@ -83,7 +83,14 @@ final class AdminController {
   public static function settings(): void {
     Auth::requireAdmin();
     $qr = is_file(dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg') ? '/assets/images/payment-qr.jpg' : null;
-    view_admin('admin/settings', ['title' => 'Settings', 'qr' => $qr]);
+    view_admin('admin/settings', ['title' => 'Settings', 'qr' => $qr, 'mapKey' => \App\Models\Settings::get('google_maps_key')]);
+  }
+  public static function saveMapKey(): void {
+    Auth::requireAdmin(); require_post();
+    $k = trim($_POST['mapkey'] ?? '');
+    if (strlen($k) > 200) { flash('error', 'Key too long'); redirect('/admin/settings'); }
+    \App\Models\Settings::set('google_maps_key', $k === '' ? null : $k);
+    flash('ok', 'Maps key saved (kosongkan untuk guna peta percuma)'); redirect('/admin/settings');
   }
   public static function saveQr(): void {
     Auth::requireAdmin(); require_post();

@@ -37,8 +37,8 @@ final class Checkout {
       $change = ($pay === 'cod' && !empty($input['change'])) ? 1 : 0;
       if ($change && $cash <= 0) throw new \RuntimeException('Isi jumlah duit untuk sediakan baki');
       $num = 'WG-' . date('Ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
-      $pdo->prepare('INSERT INTO orders (order_number,user_id,recipient,phone,address_line,city,postcode,delivery_method,delivery_fee,payment_method,payment_status,subtotal,discount,total,coupon_code,cash_tendered,needs_change,status,scheduled_slot) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
-        ->execute([$num, $uid, $input['name'], $input['phone'], $input['line1'], $input['city'], $input['postcode'], $method, $fee, $pay, $pay === 'mock_online' ? 'paid' : 'unpaid', $sub, $disc, $total, $code ?: null, $cash ?: null, $change, 'pending', $input['slot'] ?? null]);
+      $pdo->prepare('INSERT INTO orders (order_number,user_id,recipient,phone,address_line,city,postcode,delivery_method,delivery_fee,payment_method,payment_status,subtotal,discount,total,coupon_code,cash_tendered,needs_change,latitude,longitude,status,scheduled_slot) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        ->execute([$num, $uid, $input['name'], $input['phone'], $input['line1'], $input['city'], $input['postcode'], $method, $fee, $pay, $pay === 'mock_online' ? 'paid' : 'unpaid', $sub, $disc, $total, $code ?: null, $cash ?: null, $change, $input['lat'] ?? null, $input['lng'] ?? null, 'pending', $input['slot'] ?? null]);
       $oid = (int)$pdo->lastInsertId();
       foreach ($items as $i) {
         $unit = Product::effectivePrice($i);

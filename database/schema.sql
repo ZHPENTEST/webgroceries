@@ -31,6 +31,12 @@ CREATE TABLE reviews (
   INDEX idx_rev_prod (product_id, status)
 ) ENGINE=InnoDB;
 
+CREATE TABLE site_settings (
+  `k` VARCHAR(60) PRIMARY KEY,
+  `v` TEXT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 CREATE TABLE login_attempts (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   ip VARCHAR(45) NOT NULL,
@@ -152,6 +158,8 @@ CREATE TABLE orders (
   coupon_code VARCHAR(40) NULL,
   cash_tendered DECIMAL(10,2) NULL,
   needs_change TINYINT(1) NOT NULL DEFAULT 0,
+  latitude DECIMAL(10,7) NULL,
+  longitude DECIMAL(10,7) NULL,
   status ENUM('pending','confirmed','processing','packed','out_for_delivery','delivered','cancelled') NOT NULL DEFAULT 'pending',
   scheduled_slot VARCHAR(80) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

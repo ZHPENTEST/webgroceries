@@ -24,7 +24,7 @@ final class CheckoutController {
     $st->execute([$_SESSION['uid']]); $addrs = $st->fetchAll();
     $cfg = require dirname(__DIR__, 2) . '/config/app.php';
     $qrFile = dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg';
-    view('checkout', ['title' => 'Checkout'] + $t + ['addrs' => $addrs, 'fees' => $cfg['delivery_fees'], 'free_over' => $cfg['free_shipping_over'], 'slots' => self::slots(), 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null]);
+    view('checkout', ['title' => 'Checkout'] + $t + ['addrs' => $addrs, 'fees' => $cfg['delivery_fees'], 'free_over' => $cfg['free_shipping_over'], 'slots' => self::slots(), 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null, 'mapKey' => \App\Models\Settings::get('google_maps_key')]);
   }
   public static function place(): void {
     Auth::requireLogin(); require_post();
@@ -35,12 +35,16 @@ final class CheckoutController {
       }
       $slot = trim($_POST['slot'] ?? '');
       if ($slot !== '' && !in_array($slot, self::slots(), true)) throw new \RuntimeException('Invalid delivery slot');
+      $lat = ($_POST['lat'] ?? '') !== '' ? (float)$_POST['lat'] : null;
+      $lng = ($_POST['lng'] ?? '') !== '' ? (float)$_POST['lng'] : null;
+      if (($lat !== null && ($lat < -90 || $lat > 90)) || ($lng !== null && ($lng < -180 || $lng > 180))) throw new \RuntimeException('Invalid map pin');
       $r = Checkout::place((int)$_SESSION['uid'], [
         'name' => trim($_POST['name']), 'phone' => trim($_POST['phone']),
         'line1' => trim($_POST['line1']), 'city' => trim($_POST['city']),
         'postcode' => trim($_POST['postcode']), 'delivery' => $_POST['delivery'] ?? 'standard',
         'payment' => $_POST['payment'] ?? 'cod', 'coupon' => $_SESSION['coupon'] ?? '',
         'slot' => $slot, 'cash' => $_POST['cash'] ?? null, 'change' => $_POST['change'] ?? null,
+        'lat' => $lat, 'lng' => $lng,
       ]);
       unset($_SESSION['coupon'], $_SESSION['_old']);
       redirect('/orders/' . $r['order_id'] . '?placed=1');

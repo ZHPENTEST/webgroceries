@@ -17,7 +17,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
-header("Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'deny'; base-uri 'self'; form-action 'self'; object-src 'none'");
+header("Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline' https://unpkg.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://nominatim.openstreetmap.org https://maps.googleapis.com; frame-ancestors 'deny'; base-uri 'self'; form-action 'self'; object-src 'none'");
 header_remove('X-Powered-By');
 require dirname(__DIR__) . '/config/database.php';
 env_load(dirname(__DIR__));
@@ -76,6 +76,7 @@ try {
   elseif (preg_match('#^/admin/orders/(\d+)/pay-reject$#', $path, $m)) C\AdminController::payReject((int)$m[1]);
   elseif ($path === '/admin/settings') C\AdminController::settings();
   elseif ($path === '/admin/settings/qr') C\AdminController::saveQr();
+  elseif ($path === '/admin/settings/mapkey') C\AdminController::saveMapKey();
   elseif ($path === '/admin/customers') C\AdminController::customers();
   elseif ($path === '/admin/coupons') C\AdminController::coupons();
   elseif ($path === '/admin/coupons/save') C\AdminController::saveCoupon();
