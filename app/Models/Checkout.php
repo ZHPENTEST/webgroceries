@@ -32,10 +32,13 @@ final class Checkout {
       $method = in_array($input['delivery'] ?? '', ['standard','express','scheduled']) ? $input['delivery'] : 'standard';
       $fee = ($sub - $disc) >= $cfg['free_shipping_over'] && $method === 'standard' ? 0 : $fees[$method];
       $total = max(0, $sub - $disc + $fee);
-      $pay = in_array($input['payment'] ?? '', ['cod','mock_online']) ? $input['payment'] : 'cod';
+      $pay = in_array($input['payment'] ?? '', ['cod','mock_online','transfer']) ? $input['payment'] : 'cod';
+      $cash = $pay === 'cod' ? max(0, (float)($input['cash'] ?? 0)) : null;
+      $change = ($pay === 'cod' && !empty($input['change'])) ? 1 : 0;
+      if ($change && $cash <= 0) throw new \RuntimeException('Isi jumlah duit untuk sediakan baki');
       $num = 'WG-' . date('Ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
-      $pdo->prepare('INSERT INTO orders (order_number,user_id,recipient,phone,address_line,city,postcode,delivery_method,delivery_fee,payment_method,payment_status,subtotal,discount,total,coupon_code,status,scheduled_slot) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
-        ->execute([$num, $uid, $input['name'], $input['phone'], $input['line1'], $input['city'], $input['postcode'], $method, $fee, $pay, $pay === 'mock_online' ? 'paid' : 'unpaid', $sub, $disc, $total, $code ?: null, 'pending', $input['slot'] ?? null]);
+      $pdo->prepare('INSERT INTO orders (order_number,user_id,recipient,phone,address_line,city,postcode,delivery_method,delivery_fee,payment_method,payment_status,subtotal,discount,total,coupon_code,cash_tendered,needs_change,status,scheduled_slot) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        ->execute([$num, $uid, $input['name'], $input['phone'], $input['line1'], $input['city'], $input['postcode'], $method, $fee, $pay, $pay === 'mock_online' ? 'paid' : 'unpaid', $sub, $disc, $total, $code ?: null, $cash ?: null, $change, 'pending', $input['slot'] ?? null]);
       $oid = (int)$pdo->lastInsertId();
       foreach ($items as $i) {
         $unit = Product::effectivePrice($i);
@@ -45,7 +48,7 @@ final class Checkout {
         if (!$aff) throw new \RuntimeException('Stock changed during checkout');
       }
       $pdo->prepare('INSERT INTO payments (order_id,provider,reference,amount,status) VALUES (?,?,?,?,?)')
-        ->execute([$oid, $pay === 'cod' ? 'cod' : 'mock', $pay === 'cod' ? null : 'MOCK-' . bin2hex(random_bytes(6)), $total, $pay === 'cod' ? 'pending' : 'paid']);
+        ->execute([$oid, $pay, $pay === 'mock_online' ? 'MOCK-' . bin2hex(random_bytes(6)) : null, $total, $pay === 'mock_online' ? 'paid' : 'pending']);
       $pdo->prepare('DELETE FROM cart_items WHERE user_id=?')->execute([$uid]);
       $pdo->commit();
       return ['order_id' => $oid, 'order_number' => $num, 'total' => $total];

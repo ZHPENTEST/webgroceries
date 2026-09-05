@@ -324,6 +324,9 @@ background:repeating-linear-gradient(-45deg,#FFE93D 0 18px,#140826 18px 36px);bo
 .rev small{color:var(--mut)}
 /* print invoice */
 @media print{.nav,.bnav,footer,#toasts,.no-print,.buyrow,.malerts{display:none!important}body{background:#fff;color:#000}.card,.summary{box-shadow:none;position:static}}
+.cashbox{display:grid;gap:.6rem;background:rgba(255,255,255,.05);border:1px dashed var(--line);border-radius:.9rem;padding:.8rem 1rem;margin:.4rem 0}
+.qrbox{display:grid;gap:.6rem;justify-items:center;background:rgba(255,255,255,.05);border:1px dashed var(--line);border-radius:.9rem;padding:1rem;margin:.4rem 0;text-align:center}
+.qrbox img,.qrbox-img{width:min(240px,100%);border-radius:1rem;background:#fff;padding:.5rem}
 #salesChart{width:100%;display:block;margin:.5rem 0}
 /* ===== MAXIMUM STRIKE: living neon dye storm ===== */
 @keyframes hueSlide{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}

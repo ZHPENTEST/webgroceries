@@ -54,6 +54,7 @@ try {
   elseif (preg_match('#^/orders/(\d+)$#', $path, $m)) C\OrderController::show((int)$m[1]);
   elseif (preg_match('#^/orders/(\d+)/cancel$#', $path, $m)) C\OrderController::cancel((int)$m[1]);
   elseif (preg_match('#^/orders/(\d+)/reorder$#', $path, $m)) C\OrderController::reorder((int)$m[1]);
+  elseif (preg_match('#^/orders/(\d+)/claim-paid$#', $path, $m)) C\OrderController::claimPaid((int)$m[1]);
   elseif ($path === '/account') C\AccountController::dashboard();
   elseif ($path === '/account/profile' && $method === 'POST') C\AccountController::updateProfile();
   elseif ($path === '/account/password' && $method === 'POST') C\AccountController::changePassword();
@@ -71,6 +72,10 @@ try {
   elseif ($path === '/admin/orders') C\AdminController::orders();
   elseif (preg_match('#^/admin/orders/(\d+)$#', $path, $m)) C\AdminController::orderShow((int)$m[1]);
   elseif (preg_match('#^/admin/orders/(\d+)/status$#', $path, $m)) C\AdminController::orderStatus((int)$m[1]);
+  elseif (preg_match('#^/admin/orders/(\d+)/pay-confirm$#', $path, $m)) C\AdminController::payConfirm((int)$m[1]);
+  elseif (preg_match('#^/admin/orders/(\d+)/pay-reject$#', $path, $m)) C\AdminController::payReject((int)$m[1]);
+  elseif ($path === '/admin/settings') C\AdminController::settings();
+  elseif ($path === '/admin/settings/qr') C\AdminController::saveQr();
   elseif ($path === '/admin/customers') C\AdminController::customers();
   elseif ($path === '/admin/coupons') C\AdminController::coupons();
   elseif ($path === '/admin/coupons/save') C\AdminController::saveCoupon();

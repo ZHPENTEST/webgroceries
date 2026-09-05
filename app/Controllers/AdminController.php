@@ -68,6 +68,36 @@ final class AdminController {
     $items = Database::pdo()->query('SELECT r.*, p.name pname, u.name uname FROM reviews r JOIN products p ON p.id=r.product_id JOIN users u ON u.id=r.user_id ORDER BY r.id DESC LIMIT 100')->fetchAll();
     view_admin('admin/reviews', ['title' => 'Reviews', 'items' => $items]);
   }
+  public static function payConfirm(int $id): void {
+    Auth::requireAdmin(); require_post();
+    $pdo = Database::pdo();
+    $pdo->prepare('UPDATE payments SET status="paid" WHERE order_id=?')->execute([$id]);
+    $pdo->prepare('UPDATE orders SET payment_status="paid" WHERE id=?')->execute([$id]);
+    flash('ok', 'Payment confirmed'); redirect('/admin/orders/' . $id);
+  }
+  public static function payReject(int $id): void {
+    Auth::requireAdmin(); require_post();
+    Database::pdo()->prepare('UPDATE payments SET status="pending" WHERE order_id=?')->execute([$id]);
+    flash('ok', 'Sent back to pending'); redirect('/admin/orders/' . $id);
+  }
+  public static function settings(): void {
+    Auth::requireAdmin();
+    $qr = is_file(dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg') ? '/assets/images/payment-qr.jpg' : null;
+    view_admin('admin/settings', ['title' => 'Settings', 'qr' => $qr]);
+  }
+  public static function saveQr(): void {
+    Auth::requireAdmin(); require_post();
+    $f = $_FILES['qr'] ?? null;
+    if (!$f || $f['error'] !== UPLOAD_ERR_OK || $f['size'] > 2 * 1024 * 1024) { flash('error', 'Upload failed (max 2MB)'); redirect('/admin/settings'); }
+    $fi = new \finfo(FILEINFO_MIME_TYPE); $mime = $fi->file($f['tmp_name']);
+    if (!in_array($mime, ['image/jpeg','image/png','image/webp'], true)) { flash('error', 'Only JPG/PNG/WebP'); redirect('/admin/settings'); }
+    $dst = dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg';
+    if ($mime === 'image/jpeg') { $im = imagecreatefromjpeg($f['tmp_name']); }
+    elseif ($mime === 'image/png') { $im = imagecreatefrompng($f['tmp_name']); }
+    else { $im = imagecreatefromwebp($f['tmp_name']); }
+    imagejpeg($im, $dst, 88);
+    flash('ok', 'Payment QR updated'); redirect('/admin/settings');
+  }
   public static function delReview(int $id): void {
     Auth::requireAdmin(); require_post();
     Database::pdo()->prepare('DELETE FROM reviews WHERE id=?')->execute([$id]);
@@ -113,7 +143,8 @@ final class AdminController {
     $st = $pdo->prepare('SELECT * FROM orders WHERE id=? LIMIT 1'); $st->execute([$id]); $o = $st->fetch();
     if (!$o) { http_response_code(404); exit('Not found'); }
     $it = $pdo->prepare('SELECT * FROM order_items WHERE order_id=?'); $it->execute([$id]);
-    view_admin('admin/order_detail', ['title' => 'Order ' . $o['order_number'], 'o' => $o, 'items' => $it->fetchAll()]);
+    $py = $pdo->prepare('SELECT * FROM payments WHERE order_id=? LIMIT 1'); $py->execute([$id]);
+    view_admin('admin/order_detail', ['title' => 'Order ' . $o['order_number'], 'o' => $o, 'items' => $it->fetchAll(), 'pay' => $py->fetch() ?: null]);
   }
   public static function orderStatus(int $id): void {
     Auth::requireAdmin(); require_post();

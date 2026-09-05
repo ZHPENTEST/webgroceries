@@ -11,6 +11,15 @@
 <label>Scheduled slot (optional)<select name="slot"><option value="">No preference</option><?php foreach ($slots as $s): ?><option><?= e($s) ?></option><?php endforeach; ?></select></label></fieldset>
 <fieldset><legend>Payment</legend>
 <label class="radio"><input type="radio" name="payment" value="cod" checked> Cash on Delivery</label>
+<div class="cashbox" id="cashBox">
+<label class="radio"><input type="checkbox" name="change" value="1"> Saya perlukan duit baki (rider sediakan duit kecil)</label>
+<label>Bayar dengan (RM)<input name="cash" type="number" step="0.01" min="0" inputmode="decimal" placeholder="cth. 50.00"></label>
+</div>
+<label class="radio"><input type="radio" name="payment" value="transfer"> Bank Transfer (DuitNow / QR)</label>
+<div class="qrbox" id="transferBox" hidden>
+<?php if ($qr): ?><img src="<?= e($qr) ?>" alt="Payment QR"><p>Scan QR di atas untuk bayar <?= money($subtotal - $discount) ?>, kemudian tekan <b>Place order</b> dan butang <b>Saya Dah Bayar</b>.</p>
+<?php else: ?><p class="muted">QR belum dimuat naik — pilih Cash buat sementara.</p><?php endif; ?>
+</div>
 <label class="radio"><input type="radio" name="payment" value="mock_online"> Mock Online Payment (test only, no real charge)</label></fieldset>
 </div>
 <aside class="summary"><h3>Order summary</h3>

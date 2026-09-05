@@ -49,6 +49,19 @@ final class OrderController {
     $st->execute([$id, $_SESSION['uid']]); $o = $st->fetch();
     if (!$o) { http_response_code(404); view('errors/404', ['title' => 'Not found']); return; }
     $it = $pdo->prepare('SELECT * FROM order_items WHERE order_id=?'); $it->execute([$id]);
-    view('order_detail', ['title' => 'Order ' . $o['order_number'], 'o' => $o, 'items' => $it->fetchAll(), 'placed' => isset($_GET['placed'])]);
+    $py = $pdo->prepare('SELECT * FROM payments WHERE order_id=? LIMIT 1'); $py->execute([$id]);
+    $qrFile = dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg';
+    view('order_detail', ['title' => 'Order ' . $o['order_number'], 'o' => $o, 'items' => $it->fetchAll(), 'placed' => isset($_GET['placed']), 'pay' => $py->fetch() ?: null, 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null]);
+  }
+  public static function claimPaid(int $id): void {
+    Auth::requireLogin(); require_post();
+    $pdo = Database::pdo();
+    $st = $pdo->prepare('SELECT * FROM orders WHERE id=? AND user_id=? AND payment_method="transfer" LIMIT 1');
+    $st->execute([$id, $_SESSION['uid']]); $o = $st->fetch();
+    if (!$o) { http_response_code(404); exit('Not found'); }
+    $py = $pdo->prepare('SELECT * FROM payments WHERE order_id=? LIMIT 1'); $py->execute([$id]);
+    if (($py->fetch()['status'] ?? '') !== 'pending') { flash('error', 'Nothing to confirm'); redirect('/orders/' . $id); }
+    $pdo->prepare('UPDATE payments SET status="claimed" WHERE order_id=?')->execute([$id]);
+    flash('ok', 'Terima kasih! Admin akan sahkan bayaran anda'); redirect('/orders/' . $id);
   }
 }

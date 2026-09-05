@@ -23,7 +23,8 @@ final class CheckoutController {
     $st = $pdo->prepare('SELECT * FROM addresses WHERE user_id=? ORDER BY is_default DESC');
     $st->execute([$_SESSION['uid']]); $addrs = $st->fetchAll();
     $cfg = require dirname(__DIR__, 2) . '/config/app.php';
-    view('checkout', ['title' => 'Checkout'] + $t + ['addrs' => $addrs, 'fees' => $cfg['delivery_fees'], 'free_over' => $cfg['free_shipping_over'], 'slots' => self::slots()]);
+    $qrFile = dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg';
+    view('checkout', ['title' => 'Checkout'] + $t + ['addrs' => $addrs, 'fees' => $cfg['delivery_fees'], 'free_over' => $cfg['free_shipping_over'], 'slots' => self::slots(), 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null]);
   }
   public static function place(): void {
     Auth::requireLogin(); require_post();
@@ -39,7 +40,7 @@ final class CheckoutController {
         'line1' => trim($_POST['line1']), 'city' => trim($_POST['city']),
         'postcode' => trim($_POST['postcode']), 'delivery' => $_POST['delivery'] ?? 'standard',
         'payment' => $_POST['payment'] ?? 'cod', 'coupon' => $_SESSION['coupon'] ?? '',
-        'slot' => $slot,
+        'slot' => $slot, 'cash' => $_POST['cash'] ?? null, 'change' => $_POST['change'] ?? null,
       ]);
       unset($_SESSION['coupon'], $_SESSION['_old']);
       redirect('/orders/' . $r['order_id'] . '?placed=1');
