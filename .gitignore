@@ -1,6 +1,7 @@
 .env
 /vendor/
 /storage/logs/*.log
+/public/assets/images/payment-qr.jpg
 /public/assets/images/avatars/*
 !/public/assets/images/avatars/.gitkeep
 .DS_Store
