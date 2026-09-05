@@ -30,6 +30,14 @@ function view_admin(string $name, array $data = []): void {
   require $base . 'layout/admin_footer.php';
 }
 function money(float $n): string { return 'RM ' . number_format($n, 2); }
+function wa_number(string $raw): ?string {
+  // Normalize Malaysian numbers to wa.me format (60123456789)
+  $d = preg_replace('/\D+/', '', $raw);
+  if ($d === '') return null;
+  if (str_starts_with($d, '0')) $d = '60' . substr($d, 1);
+  if (!preg_match('/^60\d{9,10}$/', $d)) return null;
+  return $d;
+}
 function pimg(string $src, string $alt, string $attrs = ''): string {
   // Serve WebP twin when it exists (generated for all seed images + admin uploads), JPG fallback otherwise
   $a = e($alt);

@@ -77,6 +77,7 @@ try {
   elseif ($path === '/admin/settings') C\AdminController::settings();
   elseif ($path === '/admin/settings/qr') C\AdminController::saveQr();
   elseif ($path === '/admin/settings/mapkey') C\AdminController::saveMapKey();
+  elseif ($path === '/admin/settings/whatsapp') C\AdminController::saveWhatsapp();
   elseif ($path === '/admin/customers') C\AdminController::customers();
   elseif ($path === '/admin/coupons') C\AdminController::coupons();
   elseif ($path === '/admin/coupons/save') C\AdminController::saveCoupon();

@@ -83,7 +83,14 @@ final class AdminController {
   public static function settings(): void {
     Auth::requireAdmin();
     $qr = is_file(dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg') ? '/assets/images/payment-qr.jpg' : null;
-    view_admin('admin/settings', ['title' => 'Settings', 'qr' => $qr, 'mapKey' => \App\Models\Settings::get('google_maps_key')]);
+    view_admin('admin/settings', ['title' => 'Settings', 'qr' => $qr, 'mapKey' => \App\Models\Settings::get('google_maps_key'), 'wa' => \App\Models\Settings::get('merchant_whatsapp')]);
+  }
+  public static function saveWhatsapp(): void {
+    Auth::requireAdmin(); require_post();
+    $n = wa_number(trim($_POST['whatsapp'] ?? ''));
+    if (!$n) { flash('error', 'Nombor tidak sah — guna format 0123456789'); redirect('/admin/settings'); }
+    \App\Models\Settings::set('merchant_whatsapp', $n);
+    flash('ok', 'Nombor WhatsApp kedai disimpan'); redirect('/admin/settings');
   }
   public static function saveMapKey(): void {
     Auth::requireAdmin(); require_post();

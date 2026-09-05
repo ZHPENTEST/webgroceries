@@ -3,6 +3,7 @@
 <h1>Order <?= e($o['order_number']) ?></h1>
 <div class="row no-print" style="margin-bottom:1rem">
 <button class="btn ghost" onclick="window.print()">Print invoice</button>
+<?php if ($waLink ?? null): ?><a class="btn" target="_blank" rel="noopener" href="<?= e($waLink) ?>">Hantar order via WhatsApp</a><?php endif; ?>
 <?php if ($o['status'] === 'pending'): ?><form method="post" action="/orders/<?= (int)$o['id'] ?>/cancel" onsubmit="return confirm('Cancel this order?')"><?= csrf_field() ?><button class="btn ghost">Cancel order</button></form><?php endif; ?>
 <form method="post" action="/orders/<?= (int)$o['id'] ?>/reorder"><?= csrf_field() ?><button class="btn">Order again</button></form>
 </div>

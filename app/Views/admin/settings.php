@@ -6,3 +6,6 @@
 <div class="card"><h3>Google Maps API Key (pilihan)</h3>
 <p class="muted">Kosongkan untuk guna peta percuma (OpenStreetMap). Isi key untuk guna Google Maps sebenar.</p>
 <form method="post" action="/admin/settings/mapkey" class="row"><?= csrf_field() ?><input name="mapkey" value="<?= e($mapKey ?? '') ?>" placeholder="AIza..."><button class="btn">Save key</button></form></div>
+<div class="card"><h3>WhatsApp Kedai</h3>
+<p class="muted">Nombor untuk terima order via WhatsApp. Pelanggan tekan satu butang, order lengkap dihantar ke nombor ini. Percuma (wa.me).</p>
+<form method="post" action="/admin/settings/whatsapp" class="row"><?= csrf_field() ?><input name="whatsapp" value="<?= e($wa ?? '') ?>" inputmode="tel" placeholder="cth. 0123456789"><button class="btn">Save</button></form></div>

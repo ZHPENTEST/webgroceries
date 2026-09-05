@@ -51,7 +51,24 @@ final class OrderController {
     $it = $pdo->prepare('SELECT * FROM order_items WHERE order_id=?'); $it->execute([$id]);
     $py = $pdo->prepare('SELECT * FROM payments WHERE order_id=? LIMIT 1'); $py->execute([$id]);
     $qrFile = dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg';
-    view('order_detail', ['title' => 'Order ' . $o['order_number'], 'o' => $o, 'items' => $it->fetchAll(), 'placed' => isset($_GET['placed']), 'pay' => $py->fetch() ?: null, 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null]);
+    $items = $it->fetchAll();
+    // WhatsApp order link (free wa.me, no API)
+    $waLink = null;
+    if ($mw = wa_number(\App\Models\Settings::get('merchant_whatsapp') ?? '')) {
+      $lines = ['*ORDER ' . $o['order_number'] . ' - WebGroceries*', '--------------------------'];
+      foreach ($items as $i) $lines[] = $i['quantity'] . 'x ' . $i['product_name'] . ' - ' . money((float)$i['line_total']);
+      $lines[] = '--------------------------';
+      $lines[] = 'Subtotal: ' . money((float)$o['subtotal']);
+      $lines[] = 'Diskaun: -' . money((float)$o['discount']);
+      $lines[] = 'Penghantaran (' . $o['delivery_method'] . '): ' . money((float)$o['delivery_fee']);
+      $lines[] = '*Jumlah: ' . money((float)$o['total']) . '*';
+      $lines[] = 'Bayaran: ' . $o['payment_method'];
+      $lines[] = 'Nama: ' . $o['recipient'] . ' (' . $o['phone'] . ')';
+      $lines[] = 'Alamat: ' . $o['address_line'] . ', ' . $o['city'] . ' ' . $o['postcode'];
+      if (!empty($o['latitude'])) $lines[] = 'Pin: https://www.google.com/maps?q=' . $o['latitude'] . ',' . $o['longitude'];
+      $waLink = 'https://wa.me/' . $mw . '?text=' . rawurlencode(implode("\n", $lines));
+    }
+    view('order_detail', ['title' => 'Order ' . $o['order_number'], 'o' => $o, 'items' => $items, 'placed' => isset($_GET['placed']), 'pay' => $py->fetch() ?: null, 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null, 'waLink' => $waLink]);
   }
   public static function claimPaid(int $id): void {
     Auth::requireLogin(); require_post();
