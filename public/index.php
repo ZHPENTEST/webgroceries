@@ -93,6 +93,8 @@ try {
   elseif (preg_match('#^/admin/banners/(\d+)/toggle$#', $path, $m)) C\AdminController::bannerToggle((int)$m[1]);
   elseif (preg_match('#^/admin/banners/(\d+)/delete$#', $path, $m)) C\AdminController::delBanner((int)$m[1]);
   elseif ($path === '/admin/customers') C\AdminController::customers();
+  elseif (preg_match('#^/admin/customers/(\d+)/points$#', $path, $m)) C\AdminController::customerPoints((int)$m[1]);
+  elseif (preg_match('#^/admin/customers/(\d+)/status$#', $path, $m)) C\AdminController::customerStatus((int)$m[1]);
   elseif ($path === '/admin/zones') C\AdminController::zones();
   elseif ($path === '/admin/zones/save') C\AdminController::saveZone();
   elseif (preg_match('#^/admin/zones/(\d+)/delete$#', $path, $m)) C\AdminController::delZone((int)$m[1]);

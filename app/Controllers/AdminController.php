@@ -260,8 +260,31 @@ final class AdminController {
   }
   public static function customers(): void {
     Auth::requireAdmin();
-    $items = Database::pdo()->query('SELECT id,name,email,phone,role,status,created_at FROM users WHERE role="customer" ORDER BY id DESC LIMIT 100')->fetchAll();
+    $items = Database::pdo()->query('SELECT u.id,u.name,u.email,u.phone,u.points,u.role,u.status,u.created_at,COUNT(DISTINCT o.id) orders,COALESCE(SUM(CASE WHEN o.status!="cancelled" THEN o.total ELSE 0 END),0) spent FROM users u LEFT JOIN orders o ON o.user_id=u.id WHERE u.role="customer" GROUP BY u.id ORDER BY u.id DESC LIMIT 100')->fetchAll();
     view_admin('admin/customers', ['title' => 'Customers', 'items' => $items]);
+  }
+  private static function guardCustomer(int $id): array {
+    $pdo = Database::pdo();
+    $st = $pdo->prepare('SELECT * FROM users WHERE id=? LIMIT 1'); $st->execute([$id]);
+    $t = $st->fetch();
+    if (!$t || $t['role'] !== 'customer') { http_response_code(404); exit('Not found'); }
+    if ((int)$t['id'] === (int)($_SESSION['uid'] ?? 0)) { flash('error', 'Tidak boleh ubah akaun sendiri'); redirect('/admin/customers'); }
+    return $t;
+  }
+  public static function customerPoints(int $id): void {
+    Auth::requireAdmin(); require_post();
+    self::guardCustomer($id);
+    $d = max(-10000, min(10000, (int)($_POST['delta'] ?? 0)));
+    if ($d === 0) redirect('/admin/customers');
+    Database::pdo()->prepare('UPDATE users SET points = GREATEST(0, points + ?) WHERE id=?')->execute([$d, $id]);
+    flash('ok', 'Mata dikemas kini (' . ($d > 0 ? '+' : '') . $d . ')'); redirect('/admin/customers');
+  }
+  public static function customerStatus(int $id): void {
+    Auth::requireAdmin(); require_post();
+    self::guardCustomer($id);
+    $to = ($_POST['status'] ?? '') === 'suspended' ? 'suspended' : 'active';
+    Database::pdo()->prepare('UPDATE users SET status=? WHERE id=?')->execute([$to, $id]);
+    flash('ok', $to === 'suspended' ? 'Pengguna di-ban' : 'Pengguna diaktifkan semula'); redirect('/admin/customers');
   }
   public static function coupons(): void {
     Auth::requireAdmin();

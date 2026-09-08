@@ -9,8 +9,8 @@ final class Auth {
     $u = $st->fetch();
     return $u ?: null;
   }
-  public static function check(): bool { return self::user() !== null; }
-  public static function isAdmin(): bool { $u = self::user(); return $u && $u['role'] === 'admin'; }
+  public static function check(): bool { $u = self::user(); return $u !== null && ($u['status'] ?? '') === 'active'; }
+  public static function isAdmin(): bool { $u = self::user(); return $u && $u['role'] === 'admin' && $u['status'] === 'active'; }
   public static function requireLogin(): void {
     if (!self::check()) { redirect('/login'); }
   }
