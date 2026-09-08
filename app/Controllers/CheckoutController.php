@@ -24,7 +24,7 @@ final class CheckoutController {
     $st->execute([$_SESSION['uid']]); $addrs = $st->fetchAll();
     $cfg = require dirname(__DIR__, 2) . '/config/app.php';
     $qrFile = dirname(__DIR__, 2) . '/public/assets/images/payment-qr.jpg';
-    view('checkout', ['title' => 'Checkout'] + $t + ['addrs' => $addrs, 'fees' => $cfg['delivery_fees'], 'free_over' => $cfg['free_shipping_over'], 'slots' => self::slots(), 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null, 'mapKey' => \App\Models\Settings::get('google_maps_key')]);
+    view('checkout', ['title' => 'Checkout'] + $t + ['addrs' => $addrs, 'fees' => $cfg['delivery_fees'], 'free_over' => $cfg['free_shipping_over'], 'slots' => self::slots(), 'qr' => is_file($qrFile) ? '/assets/images/payment-qr.jpg' : null, 'mapKey' => \App\Models\Settings::get('google_maps_key'), 'points' => (int)(\App\Core\Auth::user()['points'] ?? 0)]);
   }
   public static function place(): void {
     Auth::requireLogin(); require_post();
@@ -44,7 +44,7 @@ final class CheckoutController {
         'postcode' => trim($_POST['postcode']), 'delivery' => $_POST['delivery'] ?? 'standard',
         'payment' => $_POST['payment'] ?? 'cod', 'coupon' => $_SESSION['coupon'] ?? '',
         'slot' => $slot, 'cash' => $_POST['cash'] ?? null, 'change' => $_POST['change'] ?? null,
-        'lat' => $lat, 'lng' => $lng,
+        'lat' => $lat, 'lng' => $lng, 'use_points' => $_POST['use_points'] ?? null,
       ]);
       unset($_SESSION['coupon'], $_SESSION['_old']);
       redirect('/orders/' . $r['order_id'] . '?placed=1');

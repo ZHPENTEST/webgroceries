@@ -77,8 +77,25 @@ try {
   elseif ($path === '/admin/settings') C\AdminController::settings();
   elseif ($path === '/admin/settings/qr') C\AdminController::saveQr();
   elseif ($path === '/admin/settings/mapkey') C\AdminController::saveMapKey();
+  elseif (preg_match('#^/lang/(ms|en)$#', $path, $m)) { $_SESSION['lang'] = $m[1]; redirect_back('/'); }
+  elseif ($path === '/langganan' && $method === 'GET') C\SubscriptionController::index();
+  elseif ($path === '/langganan/subscribe' && $method === 'POST') C\SubscriptionController::subscribe();
+  elseif (preg_match('#^/langganan/(\d+)/(paused|cancelled|active)$#', $path, $m) && $method === 'POST') C\SubscriptionController::setStatus((int)$m[1], $m[2]);
+  elseif ($path === '/admin/subscriptions') C\AdminController::subscriptions();
+  elseif (preg_match('#^/admin/subscriptions/(\d+)/generate$#', $path, $m)) C\AdminController::subGenerate((int)$m[1]);
   elseif ($path === '/admin/settings/whatsapp') C\AdminController::saveWhatsapp();
+  elseif ($path === '/admin/backups') C\AdminController::backups();
+  elseif ($path === '/admin/backups/run') C\AdminController::backupRun();
+  elseif (preg_match('#^/admin/backups/([\w\-.]+\.sql)/download$#', $path, $m)) C\AdminController::backupDownload($m[1]);
+  elseif (preg_match('#^/admin/backups/([\w\-.]+\.sql)/delete$#', $path, $m) && $method === 'POST') C\AdminController::backupDelete($m[1]);
+  elseif ($path === '/admin/banners') C\AdminController::banners();
+  elseif ($path === '/admin/banners/save') C\AdminController::saveBanner();
+  elseif (preg_match('#^/admin/banners/(\d+)/toggle$#', $path, $m)) C\AdminController::bannerToggle((int)$m[1]);
+  elseif (preg_match('#^/admin/banners/(\d+)/delete$#', $path, $m)) C\AdminController::delBanner((int)$m[1]);
   elseif ($path === '/admin/customers') C\AdminController::customers();
+  elseif ($path === '/admin/zones') C\AdminController::zones();
+  elseif ($path === '/admin/zones/save') C\AdminController::saveZone();
+  elseif (preg_match('#^/admin/zones/(\d+)/delete$#', $path, $m)) C\AdminController::delZone((int)$m[1]);
   elseif ($path === '/admin/coupons') C\AdminController::coupons();
   elseif ($path === '/admin/coupons/save') C\AdminController::saveCoupon();
   elseif ($path === '/admin/reviews') C\AdminController::reviews();

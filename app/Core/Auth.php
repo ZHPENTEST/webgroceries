@@ -4,7 +4,7 @@ namespace App\Core;
 final class Auth {
   public static function user(): ?array {
     if (!isset($_SESSION['uid'])) return null;
-    $st = Database::pdo()->prepare('SELECT id,name,email,phone,avatar,role,status FROM users WHERE id=? LIMIT 1');
+    $st = Database::pdo()->prepare('SELECT id,name,email,phone,avatar,points,role,status FROM users WHERE id=? LIMIT 1');
     $st->execute([(int)$_SESSION['uid']]);
     $u = $st->fetch();
     return $u ?: null;

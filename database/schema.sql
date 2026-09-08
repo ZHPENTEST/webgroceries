@@ -9,6 +9,7 @@ CREATE TABLE users (
   password_hash VARCHAR(255) NOT NULL,
   phone VARCHAR(30) NULL,
   avatar VARCHAR(255) NULL,
+  points INT NOT NULL DEFAULT 0,
   role ENUM('customer','admin') NOT NULL DEFAULT 'customer',
   status ENUM('active','suspended') NOT NULL DEFAULT 'active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -29,6 +30,45 @@ CREATE TABLE reviews (
   CONSTRAINT fk_rev_prod FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   CONSTRAINT fk_rev_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   INDEX idx_rev_prod (product_id, status)
+) ENGINE=InnoDB;
+
+CREATE TABLE delivery_zones (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  prefix VARCHAR(10) NOT NULL DEFAULT '',
+  fee DECIMAL(10,2) NOT NULL,
+  status ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  sort INT NOT NULL DEFAULT 0
+) ENGINE=InnoDB;
+
+CREATE TABLE subscriptions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  qty INT NOT NULL DEFAULT 1,
+  recipient VARCHAR(120) NOT NULL,
+  phone VARCHAR(30) NOT NULL,
+  line1 VARCHAR(190) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  postcode VARCHAR(20) NOT NULL,
+  day_of_week TINYINT NOT NULL DEFAULT 1,
+  payment_method ENUM('cod','transfer') NOT NULL DEFAULT 'cod',
+  status ENUM('active','paused','cancelled') NOT NULL DEFAULT 'active',
+  next_run DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_sub_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_sub_prod FOREIGN KEY (product_id) REFERENCES products(id),
+  INDEX idx_sub_due (status, next_run)
+) ENGINE=InnoDB;
+
+CREATE TABLE banners (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  subtitle VARCHAR(200) NULL,
+  link VARCHAR(200) NULL,
+  theme ENUM('pink','purple','cyan','lime') NOT NULL DEFAULT 'pink',
+  status ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  sort INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB;
 
 CREATE TABLE site_settings (
@@ -160,6 +200,8 @@ CREATE TABLE orders (
   needs_change TINYINT(1) NOT NULL DEFAULT 0,
   latitude DECIMAL(10,7) NULL,
   longitude DECIMAL(10,7) NULL,
+  points_used INT NOT NULL DEFAULT 0,
+  points_earned INT NOT NULL DEFAULT 0,
   status ENUM('pending','confirmed','processing','packed','out_for_delivery','delivered','cancelled') NOT NULL DEFAULT 'pending',
   scheduled_slot VARCHAR(80) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -90,3 +90,19 @@ INSERT INTO products (category_id,brand,name,slug,description,price,discount_pri
 (8,'BersihCo','Multipurpose Spray 500ml','multipurpose-spray-500ml','Grease-cutting spray for kitchen and table.',9.90,NULL,75,'bottle','/assets/images/products/multipurpose-spray-500ml.jpg','active',0,0),
 (9,'Herba','Body Lotion 400ml','body-lotion-400ml','Moisturising body lotion with aloe.',24.90,21.90,50,'bottle','/assets/images/products/body-lotion-400ml.jpg','active',0,0),
 (9,'Herba','Creamy Body Wash 800ml','body-wash-800ml','Gentle creamy body wash, family size.',18.90,NULL,70,'bottle','/assets/images/products/body-wash-800ml.jpg','active',0,0);
+
+-- Delivery zones (longest postcode prefix wins, '' = fallback)
+INSERT INTO delivery_zones (name,prefix,fee,sort) VALUES
+('KL City','50',3.90,1),('Klang Valley','4',4.90,2),('Selangor Luar','6',6.90,3),('Seluruh Malaysia','',9.90,99);
+-- Subscription category + boxes
+INSERT INTO categories (name,slug,description,status) VALUES ('Kotak Langganan','langganan','Weekly curated grocery boxes.','active');
+SET @langganan = (SELECT id FROM categories WHERE slug='langganan');
+INSERT INTO products (category_id,brand,name,slug,description,price,stock_quantity,unit,image,status,is_featured) VALUES
+(@langganan,'WebGroceries','Kotak Sayur Mingguan','kotak-sayur-mingguan','Sayur segar pilihan 5-7 jenis, cukup seminggu sekeluarga.',50.00,999,'box','/assets/images/products/box-sayur.jpg','active',1),
+(@langganan,'WebGroceries','Kotak Buah Pilihan','kotak-buah-pilihan','Buah bermusim manis 4-6 jenis, dipetik masak.',40.00,999,'box','/assets/images/products/box-buah.jpg','active',1),
+(@langganan,'WebGroceries','Kotak Kombo Jimat','kotak-kombo-jimat','Sayur + buah + telur dalam satu kotak jimat.',80.00,999,'box','/assets/images/products/box-kombo.jpg','active',1);
+-- Promo banners
+INSERT INTO banners (title,subtitle,link,theme,sort) VALUES
+('Penghantaran percuma RM 80+','Standard delivery, auto-applied.','/shop','lime',1),
+('FRESH10 — 10% off RM 50+','Apply kupon dalam troli.','/cart','pink',2),
+('Express 2 jam','Zon perintis Lembah Klang.','/shop','cyan',3);

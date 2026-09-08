@@ -30,6 +30,17 @@ function view_admin(string $name, array $data = []): void {
   require $base . 'layout/admin_footer.php';
 }
 function money(float $n): string { return 'RM ' . number_format($n, 2); }
+function lang(): string { return ($_SESSION['lang'] ?? 'en') === 'ms' ? 'ms' : 'en'; }
+function t(string $k, array $r = []): string {
+  static $d = null;
+  $s = $k;
+  if (lang() === 'ms') {
+    if ($d === null) { $f = dirname(__DIR__) . '/Lang/ms.php'; $d = is_file($f) ? require $f : []; }
+    $s = $d[$k] ?? $k;
+  }
+  foreach ($r as $kk => $vv) $s = str_replace('{' . $kk . '}', (string)$vv, $s);
+  return $s;
+}
 function wa_number(string $raw): ?string {
   // Normalize Malaysian numbers to wa.me format (60123456789)
   $d = preg_replace('/\D+/', '', $raw);

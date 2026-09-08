@@ -3,6 +3,11 @@ try { $cartN = (int)(\App\Models\Cart::totals()['count'] ?? 0); } catch (\Throwa
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FF2EA6">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title><?= e($title ?? 'WebGroceries') ?></title>
 <meta name="description" content="WebGroceries — fresh groceries delivered fast. Produce, dairy, meat, pantry and more.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -11,21 +16,24 @@ try { $cartN = (int)(\App\Models\Cart::totals()['count'] ?? 0); } catch (\Throwa
 </head><body>
 <header class="nav"><div class="wrap nav-in">
 <a class="logo" href="/"><span class="logo-dot"></span>WebGroceries</a>
-<form class="search" action="/shop" method="get"><input name="q" placeholder="Search milk, salmon, rice…" value="<?= e($_GET['q'] ?? '') ?>"><button>Search</button></form>
-<nav class="links"><a href="/">Home</a><a href="/shop">Shop</a><a href="/cart">Cart <b id="cartCount"><?= $cartN ? '(' . $cartN . ')' : '' ?></b></a>
-<?php if ($u): ?><a href="/orders">Orders</a><a class="ava-link" href="/account" title="<?= e($u['name']) ?>"><?php if (!empty($u['avatar'])): ?><img class="avatar" src="<?= e($u['avatar']) ?>" alt="<?= e($u['name']) ?>"><?php else: $ini = implode('', array_map(fn($w) => strtoupper($w[0] ?? ''), array_slice(explode(' ', $u['name']), 0, 2))); ?><span class="avatar avatar-init"><?= e($ini) ?></span><?php endif; ?></a><?php if ($u['role']==='admin'): ?><a href="/admin">Admin</a><?php endif; ?><form class="loform" method="post" action="/logout" onsubmit="return confirm('Log out of WebGroceries?')"><?= csrf_field() ?><button class="btn-logout">Logout</button></form>
-<?php else: ?><a href="/login">Login</a><a class="btn" href="/register">Sign up</a><?php endif; ?></nav>
-<button class="burger" id="menuBtn" aria-expanded="false"><i><span></span><span></span><span></span></i>Menu</button>
+<form class="search" action="/shop" method="get"><input name="q" placeholder="<?= e(t('Search milk, salmon, rice…')) ?>" value="<?= e($_GET['q'] ?? '') ?>"><button><?= e(t('Search')) ?></button></form>
+<nav class="links"><a href="/"><?= e(t('Home')) ?></a><a href="/shop"><?= e(t('Shop')) ?></a><a href="/langganan"><?= e(t('Langganan')) ?></a><a href="/cart"><?= e(t('Cart')) ?> <b id="cartCount"><?= $cartN ? '(' . $cartN . ')' : '' ?></b></a>
+<?php if ($u): ?><a href="/orders"><?= e(t('Orders')) ?></a><a class="ava-link" href="/account" title="<?= e($u['name']) ?>"><?php if (!empty($u['avatar'])): ?><img class="avatar" src="<?= e($u['avatar']) ?>" alt="<?= e($u['name']) ?>"><?php else: $ini = implode('', array_map(fn($w) => strtoupper($w[0] ?? ''), array_slice(explode(' ', $u['name']), 0, 2))); ?><span class="avatar avatar-init"><?= e($ini) ?></span><?php endif; ?></a><?php if ($u['role']==='admin'): ?><a href="/admin">Admin</a><?php endif; ?><form class="loform" method="post" action="/logout" onsubmit="return confirm('Log out of WebGroceries?')"><?= csrf_field() ?><button class="btn-logout"><?= e(t('Logout')) ?></button></form>
+<?php else: ?><a href="/login"><?= e(t('Login')) ?></a><a class="btn" href="/register"><?= e(t('Sign up')) ?></a><?php endif; ?>
+<span class="langsw"><a href="/lang/ms" class="<?= lang() === 'ms' ? 'on' : '' ?>">BM</a><a href="/lang/en" class="<?= lang() === 'en' ? 'on' : '' ?>">EN</a></span></nav>
+<button class="burger" id="menuBtn" aria-expanded="false"><i><span></span><span></span><span></span></i><?= e(t('Menu')) ?></button>
 </div>
 <div class="mdrop" id="mmenu">
-<a href="/">Home</a>
-<a href="/shop">Shop</a>
-<a href="/cart">My Cart<?= $cartN ? ' (' . $cartN . ')' : '' ?></a>
-<a href="/orders">My Orders</a>
-<a href="/account">My Account</a>
+<a href="/"><?= e(t('Home')) ?></a>
+<a href="/shop"><?= e(t('Shop')) ?></a>
+<a href="/langganan"><?= e(t('Langganan')) ?></a>
+<a href="/cart"><?= e(t('My Cart')) ?><?= $cartN ? ' (' . $cartN . ')' : '' ?></a>
+<a href="/orders"><?= e(t('My Orders')) ?></a>
+<a href="/account"><?= e(t('My Account')) ?></a>
 <?php if ($u && $u['role'] === 'admin'): ?><a href="/admin">Admin</a><?php endif; ?>
-<?php if ($u): ?><form method="post" action="/logout"><?= csrf_field() ?><button>Logout</button></form>
-<?php else: ?><a href="/login">Login</a><?php endif; ?>
+<?php if ($u): ?><form method="post" action="/logout"><?= csrf_field() ?><button><?= e(t('Logout')) ?></button></form>
+<?php else: ?><a href="/login"><?= e(t('Login')) ?></a><?php endif; ?>
+<span class="langsw"><a href="/lang/ms" class="<?= lang() === 'ms' ? 'on' : '' ?>">BM</a><a href="/lang/en" class="<?= lang() === 'en' ? 'on' : '' ?>">EN</a></span>
 </div></header>
 <main class="wrap">
 <div class="malerts">

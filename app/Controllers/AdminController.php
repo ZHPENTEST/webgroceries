@@ -143,6 +143,97 @@ final class AdminController {
     $pdo->prepare('DELETE FROM categories WHERE id=?')->execute([$id]);
     redirect('/admin/categories');
   }
+  public static function zones(): void {
+    Auth::requireAdmin();
+    $items = Database::pdo()->query('SELECT * FROM delivery_zones ORDER BY sort, LENGTH(prefix) DESC')->fetchAll();
+    view_admin('admin/zones', ['title' => 'Delivery zones', 'items' => $items]);
+  }
+  public static function saveZone(): void {
+    Auth::requireAdmin(); require_post();
+    $name = mb_substr(trim($_POST['name'] ?? ''), 0, 100);
+    $prefix = preg_replace('/\D+/', '', $_POST['prefix'] ?? '');
+    $fee = max(0, (float)($_POST['fee'] ?? 0));
+    if ($name === '') { flash('error', 'Name required'); redirect('/admin/zones'); }
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id > 0) Database::pdo()->prepare('UPDATE delivery_zones SET name=?,prefix=?,fee=?,status=? WHERE id=?')->execute([$name, $prefix, $fee, $_POST['status'] ?? 'active', $id]);
+    else Database::pdo()->prepare('INSERT INTO delivery_zones (name,prefix,fee,status,sort) VALUES (?,?,?, ?,0)')->execute([$name, $prefix, $fee, 'active']);
+    redirect('/admin/zones');
+  }
+  public static function subscriptions(): void {
+    Auth::requireAdmin();
+    $items = Database::pdo()->query('SELECT s.*, p.name pname, u.name uname FROM subscriptions s JOIN products p ON p.id=s.product_id JOIN users u ON u.id=s.user_id ORDER BY s.id DESC LIMIT 100')->fetchAll();
+    view_admin('admin/subscriptions', ['title' => 'Subscriptions', 'items' => $items]);
+  }
+  public static function subGenerate(int $id): void {
+    Auth::requireAdmin(); require_post();
+    try {
+      $r = \App\Models\Subscription::generate($id);
+      flash('ok', 'Order ' . $r['order_number'] . ' dijana');
+    } catch (\Throwable $e) { flash('error', $e->getMessage()); }
+    redirect('/admin/subscriptions');
+  }
+  public static function banners(): void {
+    Auth::requireAdmin();
+    $items = Database::pdo()->query('SELECT * FROM banners ORDER BY sort')->fetchAll();
+    view_admin('admin/banners', ['title' => 'Banners', 'items' => $items]);
+  }
+  public static function saveBanner(): void {
+    Auth::requireAdmin(); require_post();
+    $title = mb_substr(trim($_POST['title'] ?? ''), 0, 150);
+    if ($title === '') { flash('error', 'Title required'); redirect('/admin/banners'); }
+    $theme = in_array($_POST['theme'] ?? '', ['pink','purple','cyan','lime'], true) ? $_POST['theme'] : 'pink';
+    Database::pdo()->prepare('INSERT INTO banners (title,subtitle,link,theme,status,sort) VALUES (?,?,?,?,?,?)')
+      ->execute([$title, mb_substr(trim($_POST['subtitle'] ?? ''), 0, 200) ?: null, mb_substr(trim($_POST['link'] ?? ''), 0, 200) ?: null, $theme, 'active', (int)($_POST['sort'] ?? 0)]);
+    redirect('/admin/banners');
+  }
+  public static function bannerToggle(int $id): void {
+    Auth::requireAdmin(); require_post();
+    Database::pdo()->prepare('UPDATE banners SET status = IF(status="active","inactive","active") WHERE id=?')->execute([$id]);
+    redirect('/admin/banners');
+  }
+  public static function delBanner(int $id): void {
+    Auth::requireAdmin(); require_post();
+    Database::pdo()->prepare('DELETE FROM banners WHERE id=?')->execute([$id]);
+    redirect('/admin/banners');
+  }
+  public static function backups(): void {
+    Auth::requireAdmin();
+    $dir = dirname(__DIR__, 2) . '/storage/backups';
+    $items = [];
+    foreach (glob($dir . '/backup-*.sql') ?: [] as $f) {
+      $items[] = ['name' => basename($f), 'size' => round(filesize($f) / 1024) . ' KB', 'date' => date('d/m/Y H:i', filemtime($f))];
+    }
+    usort($items, fn($a, $b) => strcmp($b['name'], $a['name']));
+    view_admin('admin/backups', ['title' => 'Backups', 'items' => $items]);
+  }
+  public static function backupRun(): void {
+    Auth::requireAdmin(); require_post();
+    $out = shell_exec('php ' . escapeshellarg(dirname(__DIR__, 2) . '/cron/backup.php') . ' 2>&1');
+    flash('ok', 'Backup: ' . trim((string)$out)); redirect('/admin/backups');
+  }
+  private static function backupPath(string $f): ?string {
+    if (!preg_match('/^backup-\d{8}-\d{6}\.sql$/', $f)) return null;
+    $p = dirname(__DIR__, 2) . '/storage/backups/' . $f;
+    return is_file($p) ? $p : null;
+  }
+  public static function backupDownload(string $f): void {
+    Auth::requireAdmin();
+    $p = self::backupPath($f);
+    if (!$p) { http_response_code(404); exit('Not found'); }
+    header('Content-Type: application/sql'); header('Content-Disposition: attachment; filename="' . $f . '"');
+    readfile($p); exit;
+  }
+  public static function backupDelete(string $f): void {
+    Auth::requireAdmin(); require_post();
+    $p = self::backupPath($f);
+    if ($p) @unlink($p);
+    redirect('/admin/backups');
+  }
+  public static function delZone(int $id): void {
+    Auth::requireAdmin(); require_post();
+    Database::pdo()->prepare('DELETE FROM delivery_zones WHERE id=?')->execute([$id]);
+    redirect('/admin/zones');
+  }
   public static function orders(): void {
     Auth::requireAdmin();
     $st = $_GET['status'] ?? '';

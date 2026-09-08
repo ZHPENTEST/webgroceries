@@ -20,6 +20,7 @@ final class OrderController {
       if (!$o) throw new \RuntimeException('Order not found');
       if ($o['status'] !== 'pending') throw new \RuntimeException('Only pending orders can be cancelled');
       $pdo->prepare('UPDATE orders SET status="cancelled" WHERE id=?')->execute([$id]);
+      $pdo->prepare('UPDATE users SET points = GREATEST(0, points + ? - ?) WHERE id=?')->execute([(int)$o['points_used'], (int)$o['points_earned'], $_SESSION['uid']]);
       $it = $pdo->prepare('SELECT product_id, quantity FROM order_items WHERE order_id=?'); $it->execute([$id]);
       $rs = $pdo->prepare('UPDATE products SET stock_quantity = stock_quantity + ? WHERE id=?');
       foreach ($it->fetchAll() as $r) $rs->execute([$r['quantity'], $r['product_id']]);

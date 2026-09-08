@@ -6,6 +6,6 @@
 <div class="pbody"><span class="cat"><?= e($p['cat_name'] ?? $p['brand'] ?? '') ?></span>
 <a class="pname" href="/product/<?= e($p['slug']) ?>"><?= e($p['name']) ?></a>
 <div class="price"><?php if ($p['discount_price']): ?><s><?= money((float)$p['price']) ?></s><?php endif; ?><b><?= money($eff) ?></b><span class="unit">/ <?= e($p['unit']) ?></span></div>
-<div class="stock <?= (int)$p['stock_quantity'] === 0 ? 'out' : ((int)$p['stock_quantity'] <= ($p['low_stock_threshold'] ?? 10) ? 'low' : '') ?>"><?= (int)$p['stock_quantity'] === 0 ? 'Out of stock' : ((int)$p['stock_quantity'] <= ($p['low_stock_threshold'] ?? 10) ? 'Only ' . (int)$p['stock_quantity'] . ' left' : 'In stock') ?></div>
-<button class="btn add" data-add="<?= (int)$p['id'] ?>" <?= (int)$p['stock_quantity'] === 0 ? 'disabled' : '' ?>>Add to cart</button>
+<div class="stock <?= (int)$p['stock_quantity'] === 0 ? 'out' : ((int)$p['stock_quantity'] <= ($p['low_stock_threshold'] ?? 10) ? 'low' : '') ?>"><?= e((int)$p['stock_quantity'] === 0 ? t('Out of stock') : ((int)$p['stock_quantity'] <= ($p['low_stock_threshold'] ?? 10) ? t('Only {n} left', ['n' => (int)$p['stock_quantity']]) : t('In stock'))) ?></div>
+<button class="btn add" data-add="<?= (int)$p['id'] ?>" <?= (int)$p['stock_quantity'] === 0 ? 'disabled' : '' ?>><?= e(t('Add to cart')) ?></button>
 </div></article><?php } ?>

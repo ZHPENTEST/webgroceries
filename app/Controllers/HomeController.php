@@ -11,11 +11,16 @@ final class HomeController {
     $deals = $pdo->query('SELECT * FROM products WHERE status="active" AND discount_price IS NOT NULL ORDER BY (price-discount_price) DESC LIMIT 4')->fetchAll();
     $cats = $pdo->query('SELECT * FROM categories WHERE status="active" LIMIT 9')->fetchAll();
     $flashEnds = date('c', strtotime('next sunday 23:59:59'));
+    $banners = $pdo->query('SELECT * FROM banners WHERE status="active" ORDER BY sort LIMIT 6')->fetchAll();
+    if (!$banners) $banners = [
+      ['title' => 'Penghantaran percuma RM 80+', 'subtitle' => 'Standard delivery, auto-applied.', 'link' => '/shop', 'theme' => 'lime'],
+      ['title' => 'FRESH10 — 10% off RM 50+', 'subtitle' => 'Apply kupon dalam troli.', 'link' => '/cart', 'theme' => 'pink'],
+    ];
     $reviews = [
       ['n' => 'Aina R.', 't' => 'Groceries arrived chilled and fast. Strawberries were perfect.', 'r' => 5],
       ['n' => 'Daniel K.', 't' => 'Checkout took under a minute. Express delivery is worth it.', 'r' => 5],
       ['n' => 'Mei L.', 't' => 'Fresh milk and veggies are consistently good quality.', 'r' => 4],
     ];
-    view('home', ['title' => 'WebGroceries — Fresh groceries delivered fast', 'featured' => $featured, 'best' => $best, 'deals' => $deals, 'cats' => $cats, 'reviews' => $reviews, 'flashEnds' => $flashEnds]);
+    view('home', ['title' => 'WebGroceries — Fresh groceries delivered fast', 'featured' => $featured, 'best' => $best, 'deals' => $deals, 'cats' => $cats, 'reviews' => $reviews, 'flashEnds' => $flashEnds, 'banners' => $banners]);
   }
 }

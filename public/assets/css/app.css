@@ -10,6 +10,9 @@ h1,h2,h3,.logo{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Out
 @keyframes pulse{50%{transform:scale(1.35);opacity:.6}}
 .search{display:flex;gap:.4rem;flex:1;max-width:480px;min-width:0}.search input{min-width:0}.search button{flex:none}
 .links{flex:none}
+.langsw{display:inline-flex;gap:.25rem;align-items:center}
+.langsw a{padding:.35rem .55rem;border-radius:.55rem;font-size:.82rem;font-weight:700;color:var(--mut);text-decoration:none}
+.langsw a.on{background:rgba(255,46,166,.22);color:#fff}
 @media(max-width:1300px){.nav-in{flex-wrap:wrap}.search{order:3;flex-basis:100%;max-width:none}}
 @media(min-width:901px){.catchips{display:none}}.search input{flex:1;padding:.65rem 1rem;border:1px solid var(--line);border-radius:12px;background:#EFF1F4}
 .search button,.btn{appearance:none;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:.7rem 1.4rem;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;letter-spacing:-.01em;
@@ -324,6 +327,11 @@ background:repeating-linear-gradient(-45deg,#FFE93D 0 18px,#140826 18px 36px);bo
 .pslider{overflow:hidden;border-radius:1.6rem;margin:2rem 0;background:var(--surface);border:1px solid var(--line)}
 .ptrack{display:flex;transition:transform .6s var(--spring)}
 .pslide{flex:0 0 100%;padding:1.6rem 1.8rem;display:grid;gap:.2rem}
+.pslide a{color:inherit;text-decoration:none;display:grid;gap:.2rem}
+.pslide.th-pink{background:linear-gradient(120deg,rgba(255,46,166,.25),rgba(139,47,247,.18))}
+.pslide.th-purple{background:linear-gradient(120deg,rgba(139,47,247,.28),rgba(0,229,255,.12))}
+.pslide.th-cyan{background:linear-gradient(120deg,rgba(0,229,255,.22),rgba(139,47,247,.16))}
+.pslide.th-lime{background:linear-gradient(120deg,rgba(200,255,61,.2),rgba(255,46,166,.14))}
 .pslide b{font-size:1.2rem}.pslide span{color:var(--mut)}
 .pdots{display:flex;gap:.4rem;justify-content:center;padding:.7rem}
 .pdots button{width:26px;height:8px;border-radius:99px;border:0;background:rgba(255,255,255,.2);cursor:pointer}
